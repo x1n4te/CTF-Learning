@@ -1,0 +1,8 @@
+# Local learning summaries, never course submissions.
+/.ctf-learning/
+
+# Credentials and exported/local sessions do not belong in the template.
+/.pi/auth.json
+/.pi/sessions/
+.env
+.env.*

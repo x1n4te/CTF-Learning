@@ -104,12 +104,12 @@ Installing `man-db` provides the manual reader; individual tools supply their ow
 
 ### 2. Clone this repository
 
-Copy the clone URL from this repository's GitHub **Code** menu. Replace `<repository-clone-url>` below with that URL; do not type the angle brackets literally.
+Clone the public repository; no GitHub account or token is needed to download it:
 
 ```bash
 mkdir -p ~/ctf-training
 cd ~/ctf-training
-git clone <repository-clone-url> CTF-Learning
+git clone https://github.com/x1n4te/CTF-Learning.git CTF-Learning
 cd CTF-Learning
 ```
 

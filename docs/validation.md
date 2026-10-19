@@ -13,7 +13,7 @@ node scripts/validate-setup.mjs "$(npm root -g)/@earendil-works/pi-coding-agent"
 
 If Pi is installed elsewhere, supply that package directory instead. Check `pi --version` and the package's `package.json`: the PATH CLI may differ from another installed SDK. The validator intentionally rejects versions other than 1.3.0; updating the tested version requires verifying the matching docs/APIs first.
 
-The script checks minimal settings, required files and links, one discoverable skill, four discoverable/expandable prompts, root `AGENTS.md`, and no replacement system prompt. It isolates HOME/agent resources, disables extensions, uses in-memory settings without sessions/authentication/model calls, and tests ignore rules in a disposable Git repository. It does not initialize this project as a repository. Temporary files are removed on completion or failure.
+The script checks minimal settings, required files and links, one discoverable skill, four discoverable/expandable prompts, root `AGENTS.md`, and discovery/composition of the learning-first `.pi/SYSTEM.md`. It verifies that the replacement preamble is used while project context and skill discovery remain in the composed prompt. It isolates HOME/agent resources, disables extensions, uses in-memory settings without sessions/authentication/model calls, and tests ignore rules in a disposable Git repository. It does not initialize this project as a repository. Temporary files are removed on completion or failure.
 
 This tests SDK resource discovery and default-tool resolution, **not** the complete interactive CLI trust flow or actual active tools. Ancestor context files may still be discovered; the validator checks the root instructions are included rather than claiming user-level isolation is a sandbox.
 
@@ -22,7 +22,7 @@ This tests SDK resource discovery and default-tool resolution, **not** the compl
 Perform separately on Kali Linux and Kali inside Windows WSL2; record exact OS, Node, Pi, provider/model, and command used. Use your own account, with permission to consume its model usage. Do not automate paid calls or use another person's credentials.
 
 - Follow README setup from a clean clone. Start from the repository root using `pi --tools read,write,edit`.
-- Review and accept the project trust prompt. Confirm project resources load; declining trust must not be mistaken for successful activation.
+- Review and accept the project trust prompt. Confirm project resources and `.pi/SYSTEM.md` load; declining trust must not be mistaken for successful activation. Restart after updating the system prompt; check its effective source/content through diagnostics available in your Pi version. A claimed coach identity alone is not proof of loading.
 - Verify the startup resource list contains root `AGENTS.md`, one `ctf-coach` skill, and the four `ctf-*` prompts. Confirm command completion and explicit `/skill:ctf-coach` availability without assuming completion proves the model read a skill.
 - Verify the active built-in tools are read/write/edit and the shell is absent, using startup diagnostics or the version's tool inspection UI. Inspect extension-provided tools too. Do not rely on the model's unsupported claim about its tool list.
 - In a fresh Pi 1.3.0 session, also test plain `pi` with trusted settings to confirm `defaultTools` applies. Older versions need the explicit `--tools` command. Restart between tool-configuration changes; reload alone is not proof of removal.
@@ -102,7 +102,8 @@ Executed during implementation with Node.js 22.23.1 and the locally installed Pi
 
 - PASS: `node --check scripts/validate-setup.mjs`.
 - PASS: `node scripts/validate-setup.mjs /home/computa/.pi/agent/install/releases/1.3.0/node_modules/@earendil-works/pi-coding-agent`.
-- Observed: one skill, four prompt commands, root AGENTS context, successful argument expansion with/without input, read/write/edit default resolution, valid local links, and passing temporary-repository ignore checks. No project Git repository was initialized.
+- Observed: one skill, four prompt commands, root AGENTS context, successful argument expansion with/without input, read/write/edit default resolution, valid local links, and passing temporary-repository ignore checks. The validator itself does not initialize the project repository; Git initialization/publication was performed separately at the owner's request.
+- PASS after adding the learning-first system prompt: the loader selects the exact project `.pi/SYSTEM.md` source/content; Pi 1.3.0's prompt builder uses it instead of the coding-agent preamble and retains root project context, the coaching skill advertisement, and working directory. The new system file is not git-ignored.
 - NOT RUN: interactive CLI trust/active-tool verification, all eight live-model scenarios, fresh package installation, Kali Linux, and Windows WSL2. No user credentials or saved conversations were inspected, and no model API call was made by the validator.
 
 The first validator runs exposed a missing documentation file and a non-public prompt-expansion export; both were corrected before the passing run. An independent read-only implementation reviewer found no issues; that reviewer inspected the validator but could not independently execute it. Discovery/default resolution and code review alone do not establish learner rollout readiness.

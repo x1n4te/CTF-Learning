@@ -28,7 +28,9 @@ for (const name of promptNames) {
   assert(content.includes('$@'), `${name} must accept learner arguments`);
 }
 assert(read('AGENTS.md').includes('untrusted'));
-for (const path of ['.pi/SYSTEM.md', '.pi/APPEND_SYSTEM.md', '.pi/extensions', '.pi/mcp.json']) {
+const systemPrompt = read('.pi/SYSTEM.md').trim();
+assert(systemPrompt.startsWith('You are a CTF learning coach'));
+for (const path of ['.pi/APPEND_SYSTEM.md', '.pi/extensions', '.pi/mcp.json']) {
   assert(!existsSync(join(root, path)), `${path} is outside the minimal setup`);
 }
 
@@ -53,6 +55,7 @@ try {
   const { DefaultResourceLoader, SettingsManager } = await import(pathToFileURL(join(piDir, 'dist/index.js')));
   // Version-specific test helper, not a public SDK export; guarded by the exact version check.
   const { expandPromptTemplate } = await import(pathToFileURL(join(piDir, 'dist/core/prompt-templates.js')));
+  const { buildSystemPromptSections } = await import(pathToFileURL(join(piDir, 'dist/core/system-prompt.js')));
   const settingsManager = SettingsManager.inMemory(config);
   const loader = new DefaultResourceLoader({
     cwd: root, agentDir: process.env.PI_CODING_AGENT_DIR, settingsManager,
@@ -67,9 +70,20 @@ try {
   const prompts = loader.getPrompts().prompts;
   assert.deepEqual(prompts.map(p => p.name).sort(), promptNames);
   assert(prompts.every(p => p.filePath === join(root, '.pi/prompts', `${p.name}.md`) && p.description));
-  assert(loader.getAgentsFiles().agentsFiles.some(f => f.path === join(root, 'AGENTS.md')));
-  assert.equal(loader.getSystemPrompt(), undefined);
+  const contextFiles = loader.getAgentsFiles().agentsFiles;
+  assert(contextFiles.some(f => f.path === join(root, 'AGENTS.md')));
+  assert.equal(loader.getSystemPrompt()?.trim(), systemPrompt);
+  assert.equal(loader.getSystemPromptSource()?.path, join(root, '.pi/SYSTEM.md'));
   assert.deepEqual(loader.getAppendSystemPrompt(), []);
+  const sections = buildSystemPromptSections({
+    customPrompt: loader.getSystemPrompt(), selectedTools: config.defaultTools,
+    cwd: root, contextFiles, skills: loader.getSkills().skills,
+  });
+  assert.equal(sections.preamble.trim(), systemPrompt);
+  assert(!sections.preamble.includes('You are an expert coding assistant operating inside pi'));
+  assert(sections.project_context.includes(read('AGENTS.md')));
+  assert(sections.skills.includes(join(root, skillPath)));
+  assert(sections.cwd.includes(root));
   for (const name of promptNames) {
     const marker = 'synthetic-input';
     const expanded = expandPromptTemplate(`/${name} ${marker}`, prompts);
@@ -78,6 +92,7 @@ try {
     assert(!expandPromptTemplate(`/${name}`, prompts).includes('$@'));
   }
   console.log('PASS: Pi 1.3.0 discovers 1 skill, 4 prompts, root AGENTS; arguments expand; file-tool defaults resolve.');
+  console.log('PASS: project SYSTEM.md replaces the coding preamble while composed context and skill discovery remain present.');
   console.log('NOTE: SDK discovery uses in-memory settings without extensions; it does not test CLI trust, active model tools, or behavior.');
 
   // Test ignore semantics in a disposable Git repository, never initialize the working tree.
@@ -93,7 +108,7 @@ try {
     const result = git(['-C', repo, 'check-ignore', '--no-index', '-v', path]);
     assert.equal(result.status, 0, `Not ignored: ${path}: ${result.stderr}`);
   }
-  for (const path of ['README.md', 'AGENTS.md', '.pi/settings.json', '.pi/prompts/ctf-start.md', skillPath]) {
+  for (const path of ['README.md', 'AGENTS.md', '.pi/SYSTEM.md', '.pi/settings.json', '.pi/prompts/ctf-start.md', skillPath]) {
     const result = git(['-C', repo, 'check-ignore', '--no-index', path]);
     assert.equal(result.status, 1, `Unexpected ignore or error for ${path}: ${result.stdout} ${result.stderr}`);
   }

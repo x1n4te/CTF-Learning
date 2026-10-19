@@ -143,7 +143,9 @@ pi --tools read,write,edit
 
 **Use this command from this repository root every time.** Do not launch from a challenge download folder or a nested directory and assume the project `.pi` setup will load.
 
-Review and accept the project-trust prompt so Pi can load the project settings, skills, and commands. Keep context-file loading enabled so root `AGENTS.md` is included.
+Review and accept the project-trust prompt so Pi can load the project settings, learning-first system prompt, skills, and commands. Keep context-file loading enabled so root `AGENTS.md` is included.
+
+The project's [`.pi/SYSTEM.md`](.pi/SYSTEM.md) replaces Pi's default coding-agent prompt with a **CTF learning coach** identity. Its goal is your understanding and independence, not automatically editing code or completing tasks. Pi still supplies project context, skill discovery, and tool definitions; the replacement does not enforce tool permissions. The trusted project `SYSTEM.md` takes precedence over a user-level file of the same name; they are not merged. Other personal context, append instructions, and extensions can still affect the session. Restart Pi after updating the prompt to begin with the new coaching identity.
 
 Why the explicit tool list? It gives the coach file tools for its references and approved checkpoints, without the built-in shell. Pi 1.3.0 also reads the same defaults from `.pi/settings.json`. Older versions, including Pi 0.80.2, do **not** support that `defaultTools` setting; do not assume plain `pi` disables their shell. The explicit launch command is the compatibility fallback, not a claim that every older version has been tested.
 
@@ -388,6 +390,7 @@ Do not assume the newest Pi release is automatically compatible. This setup's re
 AGENTS.md                         Standing coaching principles
 CONTEXT.md                        Shared terminology
 .pi/
+  SYSTEM.md                       Learning-first coach identity and teaching approach
   settings.json                   Built-in file-tool defaults
   prompts/                        Four learner commands
   skills/ctf-coach/
@@ -398,7 +401,7 @@ scripts/validate-setup.mjs         Offline maintainer validator, not an extensio
 docs/                             Design, review task, validation scenarios/results
 ```
 
-No custom executable extensions, replacement system prompt, mandatory web packages, bundled labs, or mentor dashboard. Ordinary learners do not need to run the maintainer validator to start.
+The custom system prompt is plain Markdown, not an executable extension. No custom executable extensions, mandatory web packages, bundled labs, or mentor dashboard are included. Ordinary learners do not need to run the maintainer validator to start.
 
 - [Design and accepted constraints](docs/design.md)
 - [Shared terminology](CONTEXT.md)

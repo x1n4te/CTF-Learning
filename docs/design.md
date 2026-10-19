@@ -23,7 +23,7 @@ Status: design and review clarifications approved by the owner; initial implemen
 - Teach category foundations just in time, with short explanations and teach-back questions rather than mandatory lectures or constant quizzes.
 - Offer optional, git-ignored local learning checkpoints containing observations, attempted hypotheses, and the next experiment. Obtain learner approval before saving; exclude flags and credentials.
 
-- Keep the initial setup minimal: root AGENTS.md for standing coaching rules, one coaching skill with category references, and project prompt templates. Do not replace Pi's system prompt or add custom executable extensions initially.
+- Keep the setup minimal: .pi/SYSTEM.md establishes a learning-first coach identity instead of Pi's default coding-agent identity; root AGENTS.md holds standing coaching rules; one skill provides category references and detailed workflows; prompt templates provide entry points. The owner explicitly approved adding the replacement system prompt after the initial implementation. Do not add custom executable extensions.
 - Disable the built-in shell tool by default. During coaching, file tools may read only .pi/skills/ctf-coach/** and .ctf-learning/**, and write/edit only .ctf-learning/**. Learners paste descriptions, manual excerpts, tool output, and code attempts; do not read or edit local challenge artifacts/scripts. This is an instructional allowlist, not enforced filesystem isolation. Do not require a web-access extension; user-installed extensions may expose additional tools.
 - Provide /ctf-start, /ctf-hint, /ctf-checkpoint, and /ctf-resume. Saving is explicit, not silent. Keep one checkpoint per challenge in a git-ignored directory; confirm the challenge and current authorized target on resume.
 - Cover web, network/service enumeration, cryptography, forensics, reverse engineering, and binary exploitation. Each category reference covers observations, foundational concepts, common reasoning mistakes, and manual-reading prompts, not fixed tool checklists or solution recipes.
@@ -42,12 +42,13 @@ Status: design and review clarifications approved by the owner; initial implemen
 ## Approved implementation outline
 
 - Root AGENTS.md, README.md, and .gitignore.
+- .pi/SYSTEM.md replacing the default coding-agent preamble with learning objectives, learner agency, concise adaptive teaching, and no-spoiler/privacy principles. Keep detailed workflow mechanics in AGENTS.md and the coaching skill. Verify the composed prompt retains project context and skill discovery; the replacement is not an enforcement boundary.
 - .pi/settings.json selecting read/write/edit without a shell using defaultTools, documented in Pi 1.3.0. The PATH installation found during implementation is 0.80.2, which lacks this setting; document an explicit --tools read,write,edit launch for older installs and require verification of the active tools. Do not pin student authentication or model choices.
 - .pi/skills/ctf-coach/SKILL.md and six category references.
 - .pi/prompts/ctf-start.md, ctf-hint.md, ctf-checkpoint.md, and ctf-resume.md.
 - A git-ignored .ctf-learning/ directory created on the first approved save; no automatic saving or resuming. Use a confirmed, unique lowercase alphanumeric/hyphen slug (at most 64 characters, no leading/trailing/consecutive hyphens), directly under that directory. No arbitrary paths or symlinked checkpoint directories. Document that git-ignore neither encrypts data nor clears tracked history or Pi session logs.
 - Setup documentation and a reproducible validation checklist with synthetic coaching scenarios.
 
-No custom executable extensions, mandatory web-access packages, bundled challenges, mentor reporting, or replacement system prompt in the initial version.
+No custom executable extensions, mandatory web-access packages, bundled challenges, or mentor reporting. The originally excluded replacement system prompt is now explicitly requested and included as a plain Markdown learning-first identity.
 
 Consequential architectural trade-offs will be recorded as ADRs when settled. Terminology lives in ../CONTEXT.md.

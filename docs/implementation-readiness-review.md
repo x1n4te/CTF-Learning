@@ -27,8 +27,8 @@ Challenge these only when they create a concrete contradiction or make the goal 
 - Learners read titles/descriptions and relevant manual sections, execute commands, and provide results. Pi coaches; it does not conduct the investigation.
 - Evidence-driven guidance, progressive hints, just-in-time foundations, pseudocode/scaffolds, and review of learner attempts; no supplied walkthroughs, flags, remembered hidden solutions, or immediate complete solvers.
 - Kali Linux first, Windows through WSL2 also supported.
-- Minimal resources: root `AGENTS.md`, project settings, one coaching skill with six category references, four prompt commands, optional local checkpoints, and setup/validation documentation.
-- No custom executable extensions, mandatory web packages, or replacement system prompt initially. Built-in shell disabled by default; file tools retained.
+- Minimal resources: a learning-first `.pi/SYSTEM.md`, root `AGENTS.md`, project settings, one coaching skill with six category references, four prompt commands, optional local checkpoints, and setup/validation documentation.
+- The owner explicitly requested replacing Pi's coding-agent identity with a learning coach after the initial implementation. Verify the replacement preserves project context and skill discovery without claiming isolation. No custom executable extensions or mandatory web packages. Built-in shell disabled by default; file tools retained.
 - Instructions and tool selections are not a sandbox or tamper-proof enforcement. Student-installed resources may affect behavior.
 
 ## Review questions
